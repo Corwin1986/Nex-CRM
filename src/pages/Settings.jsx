@@ -21,10 +21,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
   const { company, config, resetAll, refresh } = useCompanyState();
   const sectorConfig = getSectorConfig(company?.sector);
+  const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -158,7 +160,13 @@ export default function Settings() {
               </div>
             </div>
 
-            <div className="flex justify-end pt-4">
+            <div className="flex flex-wrap gap-3 justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/Onboarding')}
+              >
+                Changer d'entreprise
+              </Button>
               <Button onClick={handleSave} disabled={saving}>
                 {saving ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

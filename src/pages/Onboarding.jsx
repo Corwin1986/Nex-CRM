@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useCompanyState } from '@/components/hooks/useCompanyState';
 import { getSectorConfig, getAllSectors } from '@/components/hooks/useSectorConfig';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import {
   FileStack, UtensilsCrossed, Home, Factory, GraduationCap,
   ArrowRight, Check, Loader2, Trash2
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ICON_MAP = {
   ShoppingBag, Lightbulb, HardHat, Heart, Sparkles, FileStack,
@@ -21,6 +23,8 @@ const ICON_MAP = {
  * Étapes : 1. Vérif entreprise existante → 2. Infos entreprise → 3. Choix secteur
  */
 export default function Onboarding({ onComplete }) {
+  const { selectCompany, resetAll } = useCompanyState();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1 = sélection/infos, 2 = secteur (si pas d'entreprise)
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -63,6 +67,7 @@ export default function Onboarding({ onComplete }) {
         sector: formData.sector,
         is_active: true
       });
+      selectCompany(company.id);
 
       // 2. Créer la configuration
       await base44.entities.AppConfiguration.create({
@@ -113,6 +118,7 @@ export default function Onboarding({ onComplete }) {
       if (onComplete) {
         await onComplete();
       }
+      navigate('/');
 
     } catch (error) {
       console.error('Onboarding error:', error);
@@ -195,9 +201,11 @@ export default function Onboarding({ onComplete }) {
                     <button
                       onClick={async () => {
                         setFormData({ ...formData, name: comp.name, sector: comp.sector });
+                        selectCompany(comp.id);
                         if (onComplete) {
                           await onComplete();
                         }
+                        navigate('/');
                       }}
                       className="flex-1 text-left"
                     >
@@ -208,8 +216,9 @@ export default function Onboarding({ onComplete }) {
                       onClick={async () => {
                         if (confirm(`Supprimer "${comp.name}" ?`)) {
                           try {
-                            await base44.entities.Company.delete(comp.id);
-                            setCompanies(companies.filter(c => c.id !== comp.id));
+                            await resetAll();
+                            setCompanies([]);
+                            setStep(1);
                           } catch (error) {
                             alert('Erreur lors de la suppression');
                           }

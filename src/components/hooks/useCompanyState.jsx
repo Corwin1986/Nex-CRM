@@ -1,6 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 
+const SELECTED_COMPANY_KEY = 'nexa:selected_company_id';
+
+const getSelectedCompanyId = () => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  return window.localStorage.getItem(SELECTED_COMPANY_KEY);
+};
+
+const setSelectedCompanyId = (companyId) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  if (!companyId) {
+    window.localStorage.removeItem(SELECTED_COMPANY_KEY);
+    return;
+  }
+  window.localStorage.setItem(SELECTED_COMPANY_KEY, companyId);
+};
+
 /**
  * Hook central pour gérer l'état de l'entreprise
  * Source de vérité unique : 1 Company max en base
@@ -14,6 +34,7 @@ export function useCompanyState() {
   const [customObjects, setCustomObjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCompanyId, setSelectedCompanyIdState] = useState(getSelectedCompanyId());
 
   const loadCompanyData = useCallback(async () => {
     try {
@@ -21,18 +42,26 @@ export function useCompanyState() {
       setError(null);
 
       // 1. Charger la company (une seule max)
-      const companies = await base44.entities.Company.list('-created_date', 1);
+      const companies = await base44.entities.Company.list('-created_date');
       
       if (!companies || companies.length === 0) {
         // Pas d'entreprise → mode onboarding
         setCompany(false);
         setConfig(null);
         setCustomObjects([]);
+        setSelectedCompanyIdState(null);
+        setSelectedCompanyId(null);
         setLoading(false);
         return;
       }
 
-      const currentCompany = companies[0];
+      const storedCompanyId = getSelectedCompanyId();
+      const resolvedCompany = storedCompanyId
+        ? companies.find((item) => item.id === storedCompanyId)
+        : null;
+      const currentCompany = resolvedCompany || companies[0];
+      setSelectedCompanyIdState(currentCompany?.id || null);
+      setSelectedCompanyId(currentCompany?.id || null);
       setCompany(currentCompany);
 
       // 2. Charger la config associée
@@ -79,6 +108,11 @@ export function useCompanyState() {
     loadCompanyData();
   }, [loadCompanyData]);
 
+  const selectCompany = useCallback((companyId) => {
+    setSelectedCompanyId(companyId);
+    setSelectedCompanyIdState(companyId);
+  }, []);
+
   // Réinitialisation complète (suppression)
   const resetAll = useCallback(async () => {
     try {
@@ -109,6 +143,8 @@ export function useCompanyState() {
       setCompany(false);
       setConfig(null);
       setCustomObjects([]);
+      setSelectedCompanyIdState(null);
+      setSelectedCompanyId(null);
       setLoading(false);
 
       return true;
@@ -133,6 +169,7 @@ export function useCompanyState() {
     
     // Actions
     refresh,
+    selectCompany,
     resetAll,
     setCompany,
     setConfig,
