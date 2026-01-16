@@ -123,7 +123,7 @@ export function useCompanyState() {
         'Payment', 'Invoice', 'Order', 'QuoteLine', 'Quote',
         'Opportunity', 'Case', 'Contract', 'Asset',
         'Contact', 'Lead', 'Account', 'Product',
-        'FlowElement', 'Flow', 'CustomField', 'CustomObject',
+        'FlowElement', 'Flow', 'ValidationRule', 'CustomField', 'CustomObject',
         'AppConfiguration', 'Company'
       ];
 

@@ -82,8 +82,22 @@ export default function Onboarding({ onComplete }) {
       const coreObjects = sectorConfig?.coreObjects || [];
       const sectorObjects = sectorConfig?.customObjects || [];
 
+      const createFieldsForObject = async (objectName, fields = []) => {
+        for (const field of fields) {
+          await base44.entities.CustomField.create({
+            object_name: objectName,
+            name: field.name,
+            label: field.label,
+            field_type: field.field_type,
+            required: field.required || false,
+            options: field.options || [],
+            default_value: field.default_value ?? null
+          });
+        }
+      };
+
       for (const obj of coreObjects) {
-        await base44.entities.CustomObject.create({
+        const createdObject = await base44.entities.CustomObject.create({
           name: obj.name,
           label: obj.label,
           label_plural: obj.label_plural || obj.label,
@@ -94,10 +108,11 @@ export default function Onboarding({ onComplete }) {
           is_core: true,
           is_active: true
         });
+        await createFieldsForObject(createdObject.name, obj.fields || []);
       }
 
       for (const obj of sectorObjects) {
-        await base44.entities.CustomObject.create({
+        const createdObject = await base44.entities.CustomObject.create({
           name: obj.name,
           label: obj.label,
           label_plural: obj.label_plural || obj.label,
@@ -108,6 +123,7 @@ export default function Onboarding({ onComplete }) {
           is_core: false,
           is_active: true
         });
+        await createFieldsForObject(createdObject.name, obj.fields || []);
       }
 
       // 5. Rafraîchir l'état global et aller au dashboard

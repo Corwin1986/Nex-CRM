@@ -13,7 +13,8 @@ import {
   Wrench, Truck, Heart, Sparkles, Store, Warehouse, Construction,
   GraduationCap, Factory, Bed, Eye, Handshake, Cog, Boxes,
   UserCheck, ClipboardCheck, BookOpen, FolderOpen, CalendarClock,
-  File, CalendarCheck, Armchair, PartyPopper, Pill
+  File, CalendarCheck, Armchair, PartyPopper, Pill, UserGraduate,
+  UserHeart, ClipboardList, Building
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -26,7 +27,8 @@ const ICON_MAP = {
   Wrench, Truck, Heart, Sparkles, Store, Warehouse, Construction,
   GraduationCap, Factory, Bed, Eye, Handshake, Cog, Boxes,
   UserCheck, ClipboardCheck, BookOpen, FolderOpen, CalendarClock,
-  File, CalendarCheck, Armchair, PartyPopper, Pill
+  File, CalendarCheck, Armchair, PartyPopper, Pill, UserGraduate,
+  UserHeart, ClipboardList, Building
 };
 
 // Mapping des objets vers les pages
