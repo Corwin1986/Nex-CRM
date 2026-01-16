@@ -437,7 +437,7 @@ export const SECTORS = {
         name: 'patient',
         label: 'Patient',
         label_plural: 'Patients',
-        icon: 'UserHeart',
+        icon: 'Heart',
         menu_order: 25,
         types: ['Adulte', 'Enfant', 'Senior'],
         fields: [
@@ -893,7 +893,7 @@ export const SECTORS = {
         name: 'copropriete',
         label: 'Copropriété',
         label_plural: 'Copropriétés',
-        icon: 'Building',
+        icon: 'Building2',
         menu_order: 45,
         types: ['Syndic', 'ASL'],
         fields: [
@@ -1125,7 +1125,7 @@ export const SECTORS = {
         name: 'apprenant',
         label: 'Apprenant',
         label_plural: 'Apprenants',
-        icon: 'UserGraduate',
+        icon: 'GraduationCap',
         menu_order: 25,
         types: ['Initial', 'Alternance', 'Continue'],
         fields: [
