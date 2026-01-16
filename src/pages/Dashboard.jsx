@@ -111,7 +111,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between">
+          <div className="grid grid-cols-3 items-center">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">
                 Bonjour ! 👋
@@ -120,7 +120,12 @@ export default function Dashboard() {
                 Voici l'activité de <span className="font-medium">{company?.name}</span>
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center">
+              <Button asChild variant="outline" className="border-slate-300">
+                <Link to={createPageUrl('AdminStudio')}>Admin Studio</Link>
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 justify-self-end">
               <span 
                 className="px-3 py-1 rounded-full text-sm font-medium"
                 style={{ 

@@ -14,6 +14,7 @@ import Payments from './pages/Payments';
 import Cases from './pages/Cases';
 import Contracts from './pages/Contracts';
 import Assets from './pages/Assets';
+import AdminStudio from './pages/AdminStudio';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "Cases": Cases,
     "Contracts": Contracts,
     "Assets": Assets,
+    "AdminStudio": AdminStudio,
 }
 
 export const pagesConfig = {

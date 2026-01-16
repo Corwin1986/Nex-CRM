@@ -77,41 +77,37 @@ export default function Onboarding({ onComplete }) {
         features_enabled: ['accounts', 'contacts', 'quotes', 'invoices']
       });
 
-      // 3. Créer les CustomObjects core pour tous les secteurs
-      const coreObjects = [
-        { name: 'account', label: 'Compte', label_plural: 'Comptes', icon: 'Building2', sector: 'all', is_core: true, menu_order: 10 },
-        { name: 'contact', label: 'Contact', label_plural: 'Contacts', icon: 'Users', sector: 'all', is_core: true, menu_order: 20 },
-        { name: 'lead', label: 'Prospect', label_plural: 'Prospects', icon: 'UserPlus', sector: 'all', is_core: true, menu_order: 25 },
-        { name: 'opportunity', label: 'Opportunité', label_plural: 'Opportunités', icon: 'Target', sector: 'all', is_core: true, menu_order: 30 },
-        { name: 'product', label: 'Produit', label_plural: 'Produits', icon: 'Package', sector: 'all', is_core: true, menu_order: 35 },
-        { name: 'quote', label: 'Devis', label_plural: 'Devis', icon: 'FileText', sector: 'all', is_core: true, menu_order: 40 },
-        { name: 'order', label: 'Commande', label_plural: 'Commandes', icon: 'ShoppingCart', sector: 'all', is_core: true, menu_order: 50 },
-        { name: 'invoice', label: 'Facture', label_plural: 'Factures', icon: 'Receipt', sector: 'all', is_core: true, menu_order: 60 },
-        { name: 'payment', label: 'Paiement', label_plural: 'Paiements', icon: 'CreditCard', sector: 'all', is_core: true, menu_order: 65 },
-        { name: 'case', label: 'Ticket', label_plural: 'Tickets', icon: 'MessageSquare', sector: 'all', is_core: true, menu_order: 70 },
-        { name: 'contract', label: 'Contrat', label_plural: 'Contrats', icon: 'FileCheck', sector: 'all', is_core: true, menu_order: 75 },
-        { name: 'asset', label: 'Équipement', label_plural: 'Équipements', icon: 'Box', sector: 'all', is_core: true, menu_order: 80 },
-      ];
+      // 3. Créer les CustomObjects uniquement pour le secteur choisi
+      const sectorConfig = getSectorConfig(formData.sector);
+      const coreObjects = sectorConfig?.coreObjects || [];
+      const sectorObjects = sectorConfig?.customObjects || [];
 
       for (const obj of coreObjects) {
-        await base44.entities.CustomObject.create({ ...obj, is_active: true });
+        await base44.entities.CustomObject.create({
+          name: obj.name,
+          label: obj.label,
+          label_plural: obj.label_plural || obj.label,
+          icon: obj.icon,
+          sector: formData.sector,
+          menu_order: obj.menu_order,
+          record_types: obj.types || [],
+          is_core: true,
+          is_active: true
+        });
       }
 
-      // 4. Créer les CustomObjects spécifiques au secteur
-      const sectorConfig = getSectorConfig(formData.sector);
-      if (sectorConfig?.customObjects) {
-        for (const obj of sectorConfig.customObjects) {
-          await base44.entities.CustomObject.create({
-            name: obj.name,
-            label: obj.label,
-            label_plural: obj.label_plural,
-            icon: obj.icon,
-            sector: formData.sector,
-            menu_order: obj.menu_order,
-            is_core: false,
-            is_active: true
-          });
-        }
+      for (const obj of sectorObjects) {
+        await base44.entities.CustomObject.create({
+          name: obj.name,
+          label: obj.label,
+          label_plural: obj.label_plural || obj.label,
+          icon: obj.icon,
+          sector: formData.sector,
+          menu_order: obj.menu_order,
+          record_types: obj.types || [],
+          is_core: false,
+          is_active: true
+        });
       }
 
       // 5. Rafraîchir l'état global et aller au dashboard
