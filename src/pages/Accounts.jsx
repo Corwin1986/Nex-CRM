@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,7 @@ import {
   Building2, Plus, Search, Filter, MoreHorizontal, 
   Edit, Trash2, Eye, Phone, Mail, MapPin, ExternalLink
 } from 'lucide-react';
+import { useCompanyState } from '@/components/hooks/useCompanyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,12 +28,21 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 
 export default function Accounts() {
+  const { customObjects } = useCompanyState();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
+
+  const accountObject = useMemo(
+    () => customObjects.find((obj) => obj.name === 'account'),
+    [customObjects]
+  );
+  const accountTypes = accountObject?.record_types || [];
+  const defaultType = accountTypes[0] || 'prospect';
+
   const [formData, setFormData] = useState({
-    name: '', type: 'prospect', industry: '', phone: '', email: '',
+    name: '', type: defaultType, industry: '', phone: '', email: '',
     website: '', address: '', city: '', postal_code: '', country: 'France',
     siret: '', notes: ''
   });
@@ -66,7 +76,7 @@ export default function Accounts() {
   const openCreate = () => {
     setEditingAccount(null);
     setFormData({
-      name: '', type: 'prospect', industry: '', phone: '', email: '',
+      name: '', type: defaultType, industry: '', phone: '', email: '',
       website: '', address: '', city: '', postal_code: '', country: 'France',
       siret: '', notes: ''
     });
@@ -77,7 +87,7 @@ export default function Accounts() {
     setEditingAccount(account);
     setFormData({
       name: account.name || '',
-      type: account.type || 'prospect',
+      type: account.type || defaultType,
       industry: account.industry || '',
       phone: account.phone || '',
       email: account.email || '',
@@ -115,6 +125,20 @@ export default function Accounts() {
     client: 'bg-green-100 text-green-700',
     partenaire: 'bg-purple-100 text-purple-700',
     fournisseur: 'bg-orange-100 text-orange-700'
+  };
+
+  const getTypeColor = (typeValue, index = 0) => {
+    if (typeColors[typeValue]) {
+      return typeColors[typeValue];
+    }
+    const palette = [
+      'bg-blue-100 text-blue-700',
+      'bg-emerald-100 text-emerald-700',
+      'bg-purple-100 text-purple-700',
+      'bg-amber-100 text-amber-700',
+      'bg-rose-100 text-rose-700'
+    ];
+    return palette[index % palette.length];
   };
 
   return (
@@ -196,8 +220,13 @@ export default function Accounts() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={typeColors[account.type]}>
-                        {account.type}
+                      <Badge
+                        className={getTypeColor(
+                          account.type,
+                          Math.max(0, accountTypes.indexOf(account.type))
+                        )}
+                      >
+                        {account.type || defaultType}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -281,10 +310,20 @@ export default function Accounts() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="prospect">Prospect</SelectItem>
-                  <SelectItem value="client">Client</SelectItem>
-                  <SelectItem value="partenaire">Partenaire</SelectItem>
-                  <SelectItem value="fournisseur">Fournisseur</SelectItem>
+                  {accountTypes.length > 0 ? (
+                    accountTypes.map((typeValue, index) => (
+                      <SelectItem key={typeValue} value={typeValue}>
+                        {typeValue}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <>
+                      <SelectItem value="prospect">Prospect</SelectItem>
+                      <SelectItem value="client">Client</SelectItem>
+                      <SelectItem value="partenaire">Partenaire</SelectItem>
+                      <SelectItem value="fournisseur">Fournisseur</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
