@@ -23,7 +23,7 @@ const ICON_MAP = {
  * Étapes : 1. Vérif entreprise existante → 2. Infos entreprise → 3. Choix secteur
  */
 export default function Onboarding({ onComplete }) {
-  const { selectCompany, resetAll } = useCompanyState();
+  const { selectCompany, resetAll, refresh } = useCompanyState();
   const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1 = sélection/infos, 2 = secteur (si pas d'entreprise)
   const [loading, setLoading] = useState(false);
@@ -129,6 +129,8 @@ export default function Onboarding({ onComplete }) {
       // 5. Rafraîchir l'état global et aller au dashboard
       if (onComplete) {
         await onComplete();
+      } else {
+        await refresh();
       }
       navigate('/');
 
@@ -216,6 +218,8 @@ export default function Onboarding({ onComplete }) {
                         selectCompany(comp.id);
                         if (onComplete) {
                           await onComplete();
+                        } else {
+                          await refresh();
                         }
                         navigate('/');
                       }}
