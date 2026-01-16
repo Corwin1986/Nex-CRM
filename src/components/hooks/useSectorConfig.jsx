@@ -173,17 +173,17 @@ export const SECTORS = {
         fields: [
           { name: 'type', label: 'Type', field_type: 'select', required: true, options: ['Régie', 'Forfait', 'Projet', 'Audit'] },
           { name: 'amount', label: 'Montant', field_type: 'number' },
-          { name: 'stage', label: 'Étape', field_type: 'select', options: ['Prospection', 'Proposition', 'Négociation', 'Gagnée', 'Perdue'] }
+          { name: 'stage', label: 'Étape', field_type: 'select', options: ['Prospection', 'Devis', 'Négociation', 'Gagnée', 'Perdue'] }
         ]
       },
       {
         name: 'quote',
-        label: 'Propositions',
+        label: 'Devis',
         icon: 'FileText',
         menu_order: 40,
-        types: ['AO', 'Proposition', 'SOW'],
+        types: ['AO', 'Devis', 'SOW'],
         fields: [
-          { name: 'type', label: 'Type', field_type: 'select', required: true, options: ['AO', 'Proposition', 'SOW'] },
+          { name: 'type', label: 'Type', field_type: 'select', required: true, options: ['AO', 'Devis', 'SOW'] },
           { name: 'amount', label: 'Montant', field_type: 'number' },
           { name: 'valid_until', label: 'Valide jusqu\'au', field_type: 'date' }
         ]

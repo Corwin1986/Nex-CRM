@@ -117,7 +117,7 @@ export default function Opportunities() {
   const stageConfig = {
     prospecting: { label: 'Prospection', color: 'bg-slate-100 text-slate-700', prob: 10 },
     qualification: { label: 'Qualification', color: 'bg-blue-100 text-blue-700', prob: 25 },
-    proposal: { label: 'Proposition', color: 'bg-purple-100 text-purple-700', prob: 50 },
+    proposal: { label: 'Devis', color: 'bg-purple-100 text-purple-700', prob: 50 },
     negotiation: { label: 'Négociation', color: 'bg-amber-100 text-amber-700', prob: 75 },
     closed_won: { label: 'Gagnée', color: 'bg-green-100 text-green-700', prob: 100 },
     closed_lost: { label: 'Perdue', color: 'bg-red-100 text-red-700', prob: 0 }
@@ -319,7 +319,7 @@ export default function Opportunities() {
                 <SelectContent>
                   <SelectItem value="prospecting">Prospection</SelectItem>
                   <SelectItem value="qualification">Qualification</SelectItem>
-                  <SelectItem value="proposal">Proposition</SelectItem>
+                  <SelectItem value="proposal">Devis</SelectItem>
                   <SelectItem value="negotiation">Négociation</SelectItem>
                   <SelectItem value="closed_won">Gagnée</SelectItem>
                   <SelectItem value="closed_lost">Perdue</SelectItem>
