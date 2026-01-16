@@ -23,7 +23,14 @@ const ICON_MAP = {
  * Étapes : 1. Vérif entreprise existante → 2. Infos entreprise → 3. Choix secteur
  */
 export default function Onboarding({ onComplete }) {
-  const { selectCompany, resetAll, refresh } = useCompanyState();
+  const {
+    selectCompany,
+    resetAll,
+    refresh,
+    setCompany,
+    setConfig,
+    setCustomObjects
+  } = useCompanyState();
   const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1 = sélection/infos, 2 = secteur (si pas d'entreprise)
   const [loading, setLoading] = useState(false);
@@ -70,7 +77,7 @@ export default function Onboarding({ onComplete }) {
       selectCompany(company.id);
 
       // 2. Créer la configuration
-      await base44.entities.AppConfiguration.create({
+      const appConfig = await base44.entities.AppConfiguration.create({
         company_id: company.id,
         sector: formData.sector,
         onboarding_completed: true,
@@ -82,6 +89,7 @@ export default function Onboarding({ onComplete }) {
       const coreObjects = sectorConfig?.coreObjects || [];
       const sectorObjects = sectorConfig?.customObjects || [];
 
+      const createdObjects = [];
       const createFieldsForObject = async (objectName, fields = []) => {
         for (const field of fields) {
           await base44.entities.CustomField.create({
@@ -108,6 +116,17 @@ export default function Onboarding({ onComplete }) {
           is_core: true,
           is_active: true
         });
+        createdObjects.push({
+          ...createdObject,
+          name: obj.name,
+          label: obj.label,
+          label_plural: obj.label_plural || obj.label,
+          icon: obj.icon,
+          menu_order: obj.menu_order,
+          record_types: obj.types || [],
+          is_core: true,
+          is_active: true
+        });
         await createFieldsForObject(createdObject.name, obj.fields || []);
       }
 
@@ -123,10 +142,24 @@ export default function Onboarding({ onComplete }) {
           is_core: false,
           is_active: true
         });
+        createdObjects.push({
+          ...createdObject,
+          name: obj.name,
+          label: obj.label,
+          label_plural: obj.label_plural || obj.label,
+          icon: obj.icon,
+          menu_order: obj.menu_order,
+          record_types: obj.types || [],
+          is_core: false,
+          is_active: true
+        });
         await createFieldsForObject(createdObject.name, obj.fields || []);
       }
 
       // 5. Rafraîchir l'état global et aller au dashboard
+      setCompany(company);
+      setConfig(appConfig);
+      setCustomObjects(createdObjects);
       if (onComplete) {
         await onComplete();
       } else {
